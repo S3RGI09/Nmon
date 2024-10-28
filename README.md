@@ -42,13 +42,13 @@ The script creates a reference file named `network_state.txt` in the same direct
 ### Example Output
 
 When you run the script, you will see an output similar to the following:
-
+```
 ----- Nmon -----
 Nmap Monitor  |  By S3RGI09
 
 New device found: 192.168.1.10
 Device disconnected: 192.168.1.5
-
+```
 ### Contributing
 
 Contributions are welcome! If you have suggestions for improvements or new features, feel free to submit a pull request or open an issue.
