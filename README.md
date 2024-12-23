@@ -29,10 +29,15 @@ This project is licensed under the [Apache License 2.0](https://www.apache.org/l
 
 1. **Save the Script:** Save the script as `nmon.nse`.
 
-2. **Run the Script:** Use the following command in your terminal:
+2. **Move the script to this path** /usr/share/nmap/scripts/,
+```
+mv nmon.nse /usr/share/nmap/scripts/
+```
 
+3. **Run the Script:** Use the following command in your terminal:
+```
    nmap --script nmon.nse -sn <IP_address_or_range>
-
+```
    Replace `<IP_address_or_range>` with the IP address or range of the network you want to scan (e.g., `192.168.1.0/24`).
 
 ### Reference File
