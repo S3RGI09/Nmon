@@ -52,6 +52,10 @@ Nmap Monitor  |  By S3RGI09
 New device found: 192.168.1.10
 Device disconnected: 192.168.1.5
 ```
+
+>[!caution]
+>Use this script on your own networks or where you have explicit consent
+
 ### Contributing
 
 Contributions are welcome! If you have suggestions for improvements or new features, feel free to submit a pull request or open an issue.
