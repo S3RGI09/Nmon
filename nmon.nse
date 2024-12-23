@@ -1,5 +1,6 @@
 description = [[
-  Monitors devices in the network and compares the current state with a reference file.
+  Monitors devices in the network using ping and performs a quick scan on active devices.
+  Compares the current state with a reference file and logs changes.
 ]]
 
 author = "S3RGI09"
@@ -8,6 +9,7 @@ categories = {"discovery"}
 
 local reference_file = "network_state.txt"
 
+-- Leer el estado de referencia
 local function read_previous_state()
     local previous_state = {}
     local file = io.open(reference_file, "r")
@@ -20,6 +22,7 @@ local function read_previous_state()
     return previous_state
 end
 
+-- Guardar el estado actual
 local function save_current_state(current_state)
     local file = io.open(reference_file, "w")
     for _, ip in ipairs(current_state) do
@@ -28,6 +31,7 @@ local function save_current_state(current_state)
     file:close()
 end
 
+-- Mostrar encabezado decorativo
 local function display_header()
     local header = "----- Nmon -----"
     local subtitle = "Nmap Monitor  |  By S3RGI09"
@@ -38,35 +42,63 @@ local function display_header()
     print("")
 end
 
+-- Realizar un ping a la red para detectar dispositivos activos
+local function ping_sweep(range)
+    local active_devices = {}
+    for ip in nmap.target_ip_list(range) do
+        if nmap.ping_host(ip) then
+            table.insert(active_devices, ip)
+        end
+    end
+    return active_devices
+end
+
+-- Escanear rápidamente dispositivos detectados
+local function quick_scan(ip)
+    local scan_results = {}
+    for _, port in ipairs(nmap.ports(ip)) do
+        if port.state == "open" then
+            table.insert(scan_results, port.number)
+        end
+    end
+    return scan_results
+end
+
 action = function(host)
     display_header()
 
-    local current_state = {}
+    -- Definir rango de IPs (puede ser configurado)
+    local range = "192.168.1.0/24"  -- Cambia esto según tu red
 
-    for _, port in ipairs(host.ports) do
-        if port.state == "open" then
-            table.insert(current_state, host.ip)
-            break
-        end
+    -- Detectar dispositivos activos usando ping
+    local active_devices = ping_sweep(range)
+    if #active_devices == 0 then
+        nmap.log("No active devices found on the network.", 6)
+        return
     end
 
+    -- Leer estado anterior
     local previous_state = read_previous_state()
 
-    if #current_state > 0 then
-        for _, ip in ipairs(current_state) do
-            if not previous_state[ip] then
-                nmap.log("New device found: " .. ip, 6)
-            end
-        end
+    -- Escanear dispositivos activos y registrar cambios
+    local current_state = {}
+    for _, ip in ipairs(active_devices) do
+        table.insert(current_state, ip)
+        local scan_results = quick_scan(ip)
+        nmap.log("Device " .. ip .. " has open ports: " .. table.concat(scan_results, ", "), 6)
 
-        for ip in pairs(previous_state) do
-            if not current_state[ip] then
-                nmap.log("Device disconnected: " .. ip, 6)
-            end
+        if not previous_state[ip] then
+            nmap.log("New device found: " .. ip, 6)
         end
-
-        save_current_state(current_state)
-    else
-        nmap.log("No devices found on the network.", 6)
     end
+
+    -- Detectar dispositivos desconectados
+    for ip in pairs(previous_state) do
+        if not current_state[ip] then
+            nmap.log("Device disconnected: " .. ip, 6)
+        end
+    end
+
+    -- Guardar el estado actual
+    save_current_state(current_state)
 end
