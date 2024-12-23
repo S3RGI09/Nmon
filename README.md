@@ -54,7 +54,13 @@ Device disconnected: 192.168.1.5
 ```
 
 >[!caution]
->Use this script on your own networks or where you have explicit consent
+>Use this script on your own networks or where you have explicit consent.
+
+>[!important]
+>The script is not perfect, the information may be inaccurate, if a device is configured not to respond to Pings, it cannot be detected.
+
+>[!tip]
+>Complement this script with more tools like **Netdiscover**
 
 ### Contributing
 
