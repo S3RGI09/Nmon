@@ -1,3 +1,5 @@
+![Versión](https://img.shields.io/badge/versión-1.0.0-blue)
+![Licencia](https://img.shields.io/badge/licencia-Apache-green)
 # ![Nmon Logo](https://github.com/user-attachments/assets/8c2da856-2a0f-4380-ad0f-14a201ce966b)
 
 ## Nmap Monitor
